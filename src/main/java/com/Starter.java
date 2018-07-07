@@ -19,10 +19,10 @@ public class Starter {
 			{1},
 			{1}
 		};
-		NeuralNetwork starter = new NeuralNetwork(1);
+		NeuralNetwork starter = new NeuralNetwork(1,2,1);
 		
 		Random random = new Random();
-		for (int i=0;i<100000;i++) {
+		for (int i=0;i<10000;i++) {
 			//int index = 1;
 			int index = random.nextInt(4);
 			starter.train(inputs[index], outputs[index]);	
