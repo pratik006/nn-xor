@@ -3,6 +3,8 @@ package com;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import com.matrix.BigDecimalMatrix;
+
 
 public class NeuralNetwork {
 	public static final int SCALE = 17;

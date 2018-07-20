@@ -1,4 +1,4 @@
-package com;
+package com.matrix;
 
 class MatrixIndexOutOfBoundsException extends RuntimeException
 {
