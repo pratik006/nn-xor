@@ -1,10 +1,11 @@
-package com;
+package com.nn.dnn;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import com.nn.activation.Relu;
 import com.nn.activation.Sigmoid;
+import com.nn.layer.FullyConnected;
 
 public class NeuralNetwork {
 	

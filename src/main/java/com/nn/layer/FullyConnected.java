@@ -1,4 +1,4 @@
-package com;
+package com.nn.layer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
