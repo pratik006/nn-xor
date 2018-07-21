@@ -3,29 +3,34 @@ package com.nn.activation;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-public enum Relu implements Activation {
+public enum Softmax implements Activation {
 	INSTANCE;
 	
 	@Override
 	public RealMatrix apply(RealMatrix in) {
+		double sum = 0;
 		double data[][] = new double[in.getRowDimension()][in.getColumnDimension()]; 
 		for (int i=0;i<in.getRowDimension();i++) {
 			for (int j=0;j<in.getColumnDimension();j++) {
-				data[i][j] = Math.max(0, in.getEntry(i, j));
+				double e = Math.exp(in.getEntry(i, j));
+				sum += e;
 			}
 		}
+		
+		for (int i=0;i<data.length;i++) {
+			for (int j=0;j<data[0].length;j++) {
+				data[i][j] = data[i][j]/sum;
+			}
+		}
+		
+		
 		return MatrixUtils.createRealMatrix(data);
 	}
 
 	@Override
 	public RealMatrix gradient(RealMatrix in) {
-		double data[][] = new double[in.getRowDimension()][in.getColumnDimension()]; 
-		for (int i=0;i<in.getRowDimension();i++) {
-			for (int j=0;j<in.getColumnDimension();j++) {
-				data[i][j] = in.getEntry(i, j)>0?1 : 0;
-			}
-		}
-		return MatrixUtils.createRealMatrix(data);
+		// TODO Auto-generated method stub
+		return in;
 	}
 
 }
