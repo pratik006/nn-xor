@@ -18,7 +18,7 @@ public enum Sigmoid implements Activation {
 	}
 
 	@Override
-	public RealMatrix gradient(RealMatrix in) {
+	public RealMatrix derivative(RealMatrix in) {
 		double[][] data = new double[in.getRowDimension()][in.getColumnDimension()];
 		for (int i=0;i<in.getRowDimension();i++) {
 			for(int j=0;j<in.getColumnDimension();j++) {
