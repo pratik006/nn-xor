@@ -16,7 +16,7 @@ public enum Sigmoid implements Activation {
 	@Override
 	public RealMatrix gradient(RealMatrix in) {
 		// TODO Auto-generated method stub
-		return null;
+		return in;
 	}
 	
 	static double sigmoid(double val) {

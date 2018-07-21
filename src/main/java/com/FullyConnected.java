@@ -152,10 +152,10 @@ public class FullyConnected {
 			localGradient = next.backward(this.result, loss);
 		}
 		
-		localGradient = activations.get(0).gradient(localGradient==null?result:localGradient);
+		localGradient = activations.get(0).gradient(localGradient==null ? result : localGradient);
 		
 		localGradient = scalarMultiply(localGradient, loss).scalarMultiply(learningRate);
-		RealMatrix weightErrors = localGradient.multiply(prevResult.transpose());
+		RealMatrix weightErrors = localGradient.multiply(prevResult).transpose();
 		
 		this.weights.subtract(weightErrors.scalarMultiply(0.01));
 		this.bias.subtract(localGradient.scalarMultiply(0.01));
@@ -268,8 +268,8 @@ public class FullyConnected {
 	
 	public static RealMatrix scalarMultiply(RealMatrix x, RealMatrix y) {
 		RealMatrix res = MatrixUtils.createRealMatrix(x.getRowDimension(), x.getColumnDimension());
-		for (int i=1;i<=x.getRowDimension();i++) {
-			for (int j=1;j<=x.getColumnDimension();j++) {
+		for (int i=0;i<x.getRowDimension();i++) {
+			for (int j=0;j<x.getColumnDimension();j++) {
 				res.setEntry(i, j, x.getData()[i][j]*(y.getData()[i][j]));				
 			}
 		}
