@@ -6,18 +6,14 @@ import com.nn.activation.Activation;
 
 public class FullyConnected extends AbstractLayer {
 	
-	public FullyConnected(int inputCount, int nodes, int batchSize) {
-		super(inputCount, nodes, batchSize);
+	public FullyConnected(int inputCount, int nodes) {
+		super(inputCount, nodes);
 	}
 	
-	public FullyConnected(int inputCount, int nodes, int batchSize, Activation activation) {
-		this(inputCount, nodes, batchSize);
+	public FullyConnected(int inputCount, int nodes, Activation activation) {
+		this(inputCount, nodes);
 		this.activations.add(activation);
 	}	
-	
-	public void add(Layer layer) {
-		this.next = layer;
-	}
 	
 	public RealMatrix backward(RealMatrix prevResult, RealMatrix loss) {
 		RealMatrix derivative = applyDerivative(result);

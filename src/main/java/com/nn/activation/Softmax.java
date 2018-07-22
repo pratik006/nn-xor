@@ -29,7 +29,6 @@ public enum Softmax implements Activation {
 
 	@Override
 	public RealMatrix derivative(RealMatrix in) {
-		// TODO Auto-generated method stub
 		return in;
 	}
 

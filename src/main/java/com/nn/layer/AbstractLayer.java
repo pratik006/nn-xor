@@ -12,7 +12,6 @@ public abstract class AbstractLayer implements Layer {
 	private int nodes;
 	private int inputCount;
 	protected double learningRate = 0.1d;
-	protected int batchSize;
 	
 	protected RealMatrix weights;
 	protected RealMatrix weightDeltas;
@@ -23,10 +22,9 @@ public abstract class AbstractLayer implements Layer {
 	protected List<Activation> activations = new ArrayList<>();
 	protected int iterationNo;
 	
-	public AbstractLayer(int inputCount, int nodes, int batchSize) {
+	public AbstractLayer(int inputCount, int nodes) {
 		this.inputCount = inputCount;
 		this.nodes = nodes;
-		this.batchSize = batchSize;
 		initWeights();
 		resetDeltas();
 	}
@@ -70,6 +68,10 @@ public abstract class AbstractLayer implements Layer {
 		this.biasDeltas = MatrixUtils.createColumnRealMatrix(dB);
 	}
 	
+	public void add(Layer layer) {
+		this.next = layer;
+	}
+	
 	public RealMatrix predict(RealMatrix in) {
 		RealMatrix result = applyActivation(weights.multiply(in).add(bias));
 		return (next == null) ? result : next.predict(result);	
@@ -101,23 +103,18 @@ public abstract class AbstractLayer implements Layer {
 	protected RealMatrix backwardUpdate(RealMatrix errorGradient, RealMatrix prevResult) {
 		RealMatrix weightErrors = errorGradient.multiply(prevResult.transpose()).scalarMultiply((-1)*learningRate);
 		RealMatrix biasErrors = errorGradient.scalarMultiply((-1)*learningRate);
-		
-		if (batchSize > 1) {
-			weightDeltas = weightDeltas.add(weightErrors);		
-			biasDeltas = biasDeltas.add(biasErrors);
-			
-			if (iterationNo == batchSize) {
-				this.weights = this.weights.add(weightDeltas);
-				this.bias = this.bias.add(biasDeltas);
-				iterationNo = 0;
-				resetDeltas();
-			}	
-		} else {
-			this.weights = this.weights.add(weightErrors);
-			this.bias = this.bias.add(biasErrors);
-		}
-				
+		weightDeltas = weightDeltas.add(weightErrors);		
+		biasDeltas = biasDeltas.add(biasErrors);
 		return weights.transpose().multiply(errorGradient);
+	}
+	
+	public void updateWeightsBiases() {
+		this.weights = this.weights.add(weightDeltas);
+		this.bias = this.bias.add(biasDeltas);
+		iterationNo = 0;
+		resetDeltas();
+		if (next != null)
+			next.updateWeightsBiases();
 	}
 
 	public static RealMatrix scalarMultiply(RealMatrix x, RealMatrix y) {

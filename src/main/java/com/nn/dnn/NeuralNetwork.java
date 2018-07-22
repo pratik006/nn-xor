@@ -3,10 +3,7 @@ package com.nn.dnn;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import com.nn.activation.Tanh;
-import com.nn.layer.FullyConnected;
 import com.nn.layer.Layer;
-import com.nn.layer.OutputLayer;
 
 public class NeuralNetwork {
 	private int batchSize = 1;
@@ -17,14 +14,17 @@ public class NeuralNetwork {
 		this.batchSize = batchSize;
 	}
 	
-	FullyConnected root = null;
+	private Layer root;
 	
+	public Layer getRoot() {
+		return root;
+	}
+
+	public void setRoot(Layer root) {
+		this.root = root;
+	}
+
 	public void train(double[][] inputs, double[][] outputs) {
-		int nodes = 8;
-		root = new FullyConnected(2, nodes, batchSize, Tanh.INSTANCE);
-		Layer layer2 = new OutputLayer(nodes, 1, batchSize, Tanh.INSTANCE);
-		root.add(layer2);
-		
 		double avgLoss = 0;
 		long epoch = inputs.length/batchSize;
 		
@@ -39,9 +39,9 @@ public class NeuralNetwork {
 				losses[j] = root.forward(input, expected);
 				root.backward(input, losses[j]);
 				avgLoss = (i*avgLoss + losses[j].getEntry(0, 0))/(i+1);
-				//System.out.println(loss.getColumn(0)[0]);
-				System.out.println(avgLoss);
+				//System.out.println(avgLoss);
 			}
+			root.updateWeightsBiases();
 			/*RealMatrix avgBatchLoss = meanSquaredLoss(losses);
 			for (int j=0;j<batchSize;j++) {
 				int index = (int) (batchSize*i+j);

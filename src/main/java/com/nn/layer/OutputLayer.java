@@ -10,17 +10,17 @@ public class OutputLayer extends AbstractLayer {
 
 	private Loss loss = AbsoluteLoss.INSTANCE;
 	
-	public OutputLayer(int inputCount, int nodes, int batchSize) {
-		super(inputCount, nodes, batchSize);
+	public OutputLayer(int inputCount, int nodes) {
+		super(inputCount, nodes);
 	}
 	
-	public OutputLayer(int inputCount, int nodes, int batchSize, Activation activation) {
-		this(inputCount, nodes, batchSize);
+	public OutputLayer(int inputCount, int nodes, Activation activation) {
+		this(inputCount, nodes);
 		this.activations.add(activation);
 	}
 	
-	public OutputLayer(int inputCount, int nodes, int batchSize, Activation activation, Loss loss) {
-		this(inputCount, nodes, batchSize, activation);
+	public OutputLayer(int inputCount, int nodes, Activation activation, Loss loss) {
+		this(inputCount, nodes, activation);
 		this.loss = loss;
 	}
 	
