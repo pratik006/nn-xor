@@ -20,7 +20,7 @@ public class FullyConnected extends AbstractLayer {
 	}
 	
 	public RealMatrix backward(RealMatrix prevResult, RealMatrix loss) {
-		RealMatrix derivative = activations.get(0).derivative(result);
+		RealMatrix derivative = applyDerivative(result);
 		RealMatrix prevWeightErrors = next.backward(this.result, loss);
 		RealMatrix errorGradient = scalarMultiply(derivative, prevWeightErrors);
 		return backwardUpdate(errorGradient, prevResult);

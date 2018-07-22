@@ -47,30 +47,30 @@ public abstract class AbstractLayer implements Layer {
 	}
 	
 	public RealMatrix predict(RealMatrix in) {
-		RealMatrix result = null;
-		for (Activation activation : activations) {
-			result = activation.apply(weights.multiply(in).add(bias));	
-		}
-		
-		if (next == null) {
-			return result;
-		}
-		
-		return next.predict(result);	
+		RealMatrix result = applyActivation(weights.multiply(in).add(bias));
+		return (next == null) ? result : next.predict(result);	
 	}
 	
 	public RealMatrix forward(RealMatrix in, RealMatrix target) {
 		//System.out.println(this.hashCode()+" -- "+this.weights.getRowDimension()+", "+this.weights.getColumnDimension());
-		this.result = weights.multiply(in).add(bias);
+		result = applyActivation(weights.multiply(in).add(bias));
+		return (next != null) ? next.forward(result, target) : result.subtract(target);
+	}
+	
+	protected RealMatrix applyActivation(RealMatrix in) {
+		RealMatrix result = in;
 		for (Activation activation : activations) {
-			this.result = activation.apply(this.result);	
+			result = activation.apply(result);	
 		}
-		
-		if (next != null) {
-			return next.forward(result, target);
+		return result;
+	}
+	
+	protected RealMatrix applyDerivative(RealMatrix in) {
+		RealMatrix result = in;
+		for (Activation activation : activations) {
+			result = activation.derivative(result);	
 		}
-		
-		return result.subtract(target);
+		return result;
 	}
 	
 	protected RealMatrix backwardUpdate(RealMatrix errorGradient, RealMatrix prevResult) {

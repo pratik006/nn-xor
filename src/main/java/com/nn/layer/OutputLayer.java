@@ -17,7 +17,7 @@ public class OutputLayer extends AbstractLayer {
 	
 	@Override
 	public RealMatrix backward(RealMatrix prevResult, RealMatrix loss) {
-		RealMatrix derivative = activations.get(0).derivative(result);
+		RealMatrix derivative = applyDerivative(result);
 		RealMatrix errorGradient = scalarMultiply(derivative, loss);
 		return backwardUpdate(errorGradient, prevResult);
 	}
