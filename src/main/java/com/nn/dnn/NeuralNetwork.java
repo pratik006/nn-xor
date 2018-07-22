@@ -6,6 +6,8 @@ import org.apache.commons.math3.linear.RealMatrix;
 import com.nn.activation.Sigmoid;
 import com.nn.activation.Tanh;
 import com.nn.layer.FullyConnected;
+import com.nn.layer.Layer;
+import com.nn.layer.OutputLayer;
 
 public class NeuralNetwork {
 	
@@ -13,7 +15,7 @@ public class NeuralNetwork {
 		int nodes = 8;
 		FullyConnected root = new FullyConnected(2, nodes, Tanh.INSTANCE);
 		//FullyConnected layer1 = new FullyConnected(nodes, nodes, Sigmoid.INSTANCE);
-		FullyConnected layer2 = new FullyConnected(nodes, 1, Tanh.INSTANCE);
+		Layer layer2 = new OutputLayer(nodes, 1, Tanh.INSTANCE);
 		root.add(layer2);
 		//layer1.add(layer2);
 		
