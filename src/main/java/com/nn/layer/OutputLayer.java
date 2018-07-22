@@ -6,12 +6,12 @@ import com.nn.activation.Activation;
 
 public class OutputLayer extends AbstractLayer {
 
-	public OutputLayer(int inputCount, int nodes) {
-		super(inputCount, nodes);
+	public OutputLayer(int inputCount, int nodes, int batchSize) {
+		super(inputCount, nodes, batchSize);
 	}
 	
-	public OutputLayer(int inputCount, int nodes, Activation activation) {
-		this(inputCount, nodes);
+	public OutputLayer(int inputCount, int nodes, int batchSize, Activation activation) {
+		this(inputCount, nodes, batchSize);
 		this.activations.add(activation);
 	}
 	

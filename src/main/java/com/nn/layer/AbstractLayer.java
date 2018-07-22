@@ -12,17 +12,23 @@ public abstract class AbstractLayer implements Layer {
 	private int nodes;
 	private int inputCount;
 	protected double learningRate = 0.1d;
+	protected int batchSize;
 	
 	protected RealMatrix weights;
+	protected RealMatrix weightDeltas;
 	protected RealMatrix bias;
+	protected RealMatrix biasDeltas;
 	protected RealMatrix result;
 	protected Layer next;	
 	protected List<Activation> activations = new ArrayList<>();
+	protected int iterationNo;
 	
-	public AbstractLayer(int inputCount, int nodes) {
+	public AbstractLayer(int inputCount, int nodes, int batchSize) {
 		this.inputCount = inputCount;
 		this.nodes = nodes;
+		this.batchSize = batchSize;
 		initWeights();
+		resetDeltas();
 	}
 	
 	public void initWeights() {
@@ -46,12 +52,31 @@ public abstract class AbstractLayer implements Layer {
 		//System.out.println(B.length);
 	}
 	
+	public void resetDeltas() {
+		double[][] dW = new double[nodes][inputCount];
+		double[] dB = new double[nodes];
+		
+		for (int i=0;i<nodes;i++) {
+			dW[i] = new double[inputCount]; 
+			for (int j=0;j<inputCount;j++) {
+				dW[i][j] = 0.0d;
+			}
+		}
+		this.weightDeltas = MatrixUtils.createRealMatrix(dW);
+		
+		for (int i=0;i<nodes;i++) {
+			dB[i] = 0.0d;
+		}
+		this.biasDeltas = MatrixUtils.createColumnRealMatrix(dB);
+	}
+	
 	public RealMatrix predict(RealMatrix in) {
 		RealMatrix result = applyActivation(weights.multiply(in).add(bias));
 		return (next == null) ? result : next.predict(result);	
 	}
 	
 	public RealMatrix forward(RealMatrix in, RealMatrix target) {
+		iterationNo++;
 		//System.out.println(this.hashCode()+" -- "+this.weights.getRowDimension()+", "+this.weights.getColumnDimension());
 		result = applyActivation(weights.multiply(in).add(bias));
 		return (next != null) ? next.forward(result, target) : result.subtract(target);
@@ -76,8 +101,22 @@ public abstract class AbstractLayer implements Layer {
 	protected RealMatrix backwardUpdate(RealMatrix errorGradient, RealMatrix prevResult) {
 		RealMatrix weightErrors = errorGradient.multiply(prevResult.transpose()).scalarMultiply((-1)*learningRate);
 		RealMatrix biasErrors = errorGradient.scalarMultiply((-1)*learningRate);
-		this.weights = this.weights.add(weightErrors);
-		this.bias = this.bias.add(biasErrors);		
+		
+		if (batchSize > 1) {
+			weightDeltas = weightDeltas.add(weightErrors);		
+			biasDeltas = biasDeltas.add(biasErrors);
+			
+			if (iterationNo == batchSize) {
+				this.weights = this.weights.add(weightDeltas);
+				this.bias = this.bias.add(biasDeltas);
+				iterationNo = 0;
+				resetDeltas();
+			}	
+		} else {
+			this.weights = this.weights.add(weightErrors);
+			this.bias = this.bias.add(biasErrors);
+		}
+				
 		return weights.transpose().multiply(errorGradient);
 	}
 

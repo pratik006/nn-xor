@@ -21,15 +21,16 @@ public class Starter {
 			{0}
 		};
 		
-		double[][] inputs = new double[10000][2];
-		double[][] outputs = new double[10000][2];
-		for (int k=0;k<10000;k++) {
+		int inputSize = 8000;
+		double[][] inputs = new double[inputSize][2];
+		double[][] outputs = new double[inputSize][2];
+		for (int k=0;k<inputSize;k++) {
 			int index = (int) ((Math.random()*10) % 4);
 			inputs[k] = inTemplate[index];
 			outputs[k] = outTemplate[index];
 		}
 		
-		NeuralNetwork nn = new NeuralNetwork();
+		NeuralNetwork nn = new NeuralNetwork(20);
 		nn.train(inputs, outputs);
 		
 		System.out.println("0 Result "+Arrays.toString(nn.predict(new double[] {1,1})));
