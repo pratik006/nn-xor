@@ -1,8 +1,5 @@
 package com.nn.activation;
 
-import static java.lang.Math.pow;
-import static java.lang.Math.cosh;
-
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -21,11 +18,11 @@ public enum Tanh implements Activation {
 	}
 
 	@Override
-	public RealMatrix derivative(RealMatrix in) {
-		double[][] data = new double[in.getRowDimension()][in.getColumnDimension()];
-		for (int i=0;i<in.getRowDimension();i++) {
-			for(int j=0;j<in.getColumnDimension();j++) {
-				data[i][j] = dtanh(in.getEntry(i, j));
+	public RealMatrix derivative(RealMatrix in, RealMatrix out) {
+		double[][] data = new double[out.getRowDimension()][out.getColumnDimension()];
+		for (int i=0;i<out.getRowDimension();i++) {
+			for(int j=0;j<out.getColumnDimension();j++) {
+				data[i][j] = dtanh(out.getEntry(i, j));
 			}
 		}
 		return MatrixUtils.createRealMatrix(data);

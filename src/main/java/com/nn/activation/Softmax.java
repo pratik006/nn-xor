@@ -28,8 +28,15 @@ public enum Softmax implements Activation {
 	}
 
 	@Override
-	public RealMatrix derivative(RealMatrix in) {
-		return in;
+	public RealMatrix derivative(RealMatrix in, RealMatrix out) {
+		double[] d = new double[in.getRowDimension()];
+		for (int i=0;i<in.getRowDimension();i++) {
+			double inval = in.getEntry(i, 0);
+			double outval = out.getEntry(i, 0);
+			d[i] = outval*(1-inval);  
+		}
+		
+		return MatrixUtils.createColumnRealMatrix(d);
 	}
 
 }

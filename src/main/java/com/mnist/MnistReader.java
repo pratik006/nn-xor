@@ -14,7 +14,7 @@ public class MnistReader {
 	int nImages;
 	int nRows;
 	int nCols;
-	int[][][] images;
+	int[][] images;
 	int[] labels;
 	
 	public MnistReader(InputStream imageIs, InputStream labelIs) {
@@ -30,16 +30,14 @@ public class MnistReader {
 		this.nRows = ByteBuffer.wrap(b, 8, 4).getInt();
 		this.nCols = ByteBuffer.wrap(b, 12, 4).getInt();
 		
-		images = new int[this.nImages][this.nRows][this.nCols];
+		images = new int[this.nImages][this.nRows*this.nCols];
 		b = new byte[this.nRows*this.nCols*this.nImages];
 		int rLen = imageIs.read(b);
 		assert(rLen == 60000);
 		int ctr = 0;
 		for (int i=0;i<nImages;i++) {
-			for (int j=0;j<nRows;j++) {
-				for (int k=0;k<nCols;k++) {
-					images[i][j][k] = (int)b[ctr++];
-				}
+			for (int j=0;j<nRows*nCols;j++) {
+				images[i][j] = (int)b[ctr++];
 			}
 		}
 		imageIs.close();
@@ -57,7 +55,7 @@ public class MnistReader {
 		labelIs.close();
 	}
 	
-	public int[][][] getImages() {
+	public int[][] getImages() {
 		return images;
 	}
 	

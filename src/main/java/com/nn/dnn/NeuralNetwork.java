@@ -39,7 +39,7 @@ public class NeuralNetwork {
 				losses[j] = root.forward(input, expected);
 				root.backward(input, losses[j]);
 				avgLoss = (i*avgLoss + losses[j].getEntry(0, 0))/(i+1);
-				//System.out.println(avgLoss);
+				System.out.println(avgLoss);
 			}
 			root.updateWeightsBiases();
 			/*RealMatrix avgBatchLoss = meanSquaredLoss(losses);
@@ -51,8 +51,29 @@ public class NeuralNetwork {
 		}
 	}
 	
+	public void train(int[][] inputs, int[][] outputs) {
+		double[][] dinputs = new double[inputs.length][inputs[0].length];
+		double[][] doutputs = new double[inputs.length][outputs[0].length];
+		
+		for (int i=0;i<inputs.length;i++) {
+			for(int j=0;j<inputs[i].length;j++) {
+				dinputs[i][j] = (double)inputs[i][j];
+			}
+		}
+		for (int i=0;i<outputs.length;i++) {
+			for(int j=0;j<outputs[i].length;j++) {
+				doutputs[i][j] = (double)outputs[i][j];
+			}
+		}
+		train(dinputs, doutputs);
+	}
+	
 	public double[] predict(double[] input) {
 		return root.predict(MatrixUtils.createColumnRealMatrix(input)).getColumn(0);
+	}
+	
+	public int[] predict(int[] inputs) {
+		return toInt(predict(toDouble(inputs)));
 	}
 	
 	public RealMatrix avgLoss(RealMatrix[] losses) {
@@ -80,5 +101,21 @@ public class NeuralNetwork {
 			res[i] = res[i]/losses.length;
 		}
 		return MatrixUtils.createColumnRealMatrix(res);
+	}
+	
+	public double[] toDouble(int[] inputs) {
+		double[] dinputs = new double[inputs.length];
+		for (int i=0;i<inputs.length;i++) {
+			dinputs[i] = (double)inputs[i];
+		}
+		return dinputs;
+	}
+	
+	public int[] toInt(double[] inputs) {
+		int[] dinputs = new int[inputs.length];
+		for (int i=0;i<inputs.length;i++) {
+			dinputs[i] = (int) Math.round(inputs[i]);
+		}
+		return dinputs;
 	}
 }

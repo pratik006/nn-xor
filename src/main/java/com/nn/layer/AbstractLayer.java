@@ -95,7 +95,7 @@ public abstract class AbstractLayer implements Layer {
 	protected RealMatrix applyDerivative(RealMatrix in) {
 		RealMatrix result = in;
 		for (Activation activation : activations) {
-			result = activation.derivative(result);	
+			result = activation.derivative(in, result);	
 		}
 		return result;
 	}
