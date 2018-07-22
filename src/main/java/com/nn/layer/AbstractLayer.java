@@ -79,7 +79,7 @@ public abstract class AbstractLayer implements Layer {
 		iterationNo++;
 		//System.out.println(this.hashCode()+" -- "+this.weights.getRowDimension()+", "+this.weights.getColumnDimension());
 		result = applyActivation(weights.multiply(in).add(bias));
-		return (next != null) ? next.forward(result, target) : result.subtract(target);
+		return next.forward(result, target);
 	}
 	
 	protected RealMatrix applyActivation(RealMatrix in) {
