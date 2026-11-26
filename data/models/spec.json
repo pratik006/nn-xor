@@ -1,0 +1,37 @@
+
+{
+  "specVersion": 1,
+  "name": "xor-classifier",
+  "description": "XOR neural network",
+
+  "architecture": {
+    "type": "MLP",
+    "inputSize": 2,
+    "outputSize": 1,
+    "hiddenLayers": [8],
+    "activation": "TANH",
+    "outputActivation": "SIGMOID",
+    "initialization": "XAVIER",
+    "useBias": true
+  },
+
+  "training": {
+    "optimizer": "SGD",
+    "lossFunction": "MSE",
+    "learningRate": 0.01,
+    "epochs": 10000,
+    "batchSize": 1,
+    "momentum": 0.0,
+    "weightDecay": 0.0,
+    "dropout": 0.0,
+    "earlyStopping": false,
+    "randomSeed": 42
+  },
+
+  "inference": {
+    "temperature": 1.0,
+    "threshold": 0.0,
+    "outputMode": "CLASSIFICATION",
+    "topK": 1
+  }
+}

@@ -1,9 +1,5 @@
 package com;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
 import com.mnist.MnistReader;
 import com.nn.activation.Relu;
 import com.nn.activation.Tanh;
@@ -12,10 +8,14 @@ import com.nn.layer.FullyConnected;
 import com.nn.layer.Layer;
 import com.nn.layer.OutputLayer;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
 public class ImageTester {
-	static String baseurl = "/home/pratik/git/nn-demos/mnist/digitrecog/mnist/";
-	static String imagesFile = "train-images-idx3-ubyte";
-	static String labelsFile = "train-labels-idx1-ubyte";
+	static String baseurl = "/home/pratik/Downloads/train-images-idx3-ubyte/";
+	static String imagesFile = "train-images.idx3-ubyte";
+	static String labelsFile = "train-images.idx3-ubyte";
 	
 	public static void main(String[] args) throws IOException {
 		MnistReader reader = new MnistReader(
