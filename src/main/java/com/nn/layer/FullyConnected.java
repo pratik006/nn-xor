@@ -1,8 +1,7 @@
 package com.nn.layer;
 
-import org.apache.commons.math3.linear.RealMatrix;
-
 import com.nn.activation.Activation;
+import org.apache.commons.math3.linear.RealVector;
 
 public class FullyConnected extends AbstractLayer {
 	
@@ -15,10 +14,10 @@ public class FullyConnected extends AbstractLayer {
 		this.activations.add(activation);
 	}	
 	
-	public RealMatrix backward(RealMatrix prevResult, RealMatrix loss) {
-		RealMatrix derivative = applyDerivative(result);
-		RealMatrix prevWeightErrors = next.backward(this.result, loss);
-		RealMatrix errorGradient = scalarMultiply(derivative, prevWeightErrors);
+	public RealVector backward(RealVector prevResult, RealVector loss) {
+		RealVector derivative = applyDerivative(result);
+		RealVector prevWeightErrors = next.backward(this.result, loss);
+		RealVector errorGradient = derivative.ebeMultiply(prevWeightErrors);
 		return backwardUpdate(errorGradient, prevResult);
 	}
 }

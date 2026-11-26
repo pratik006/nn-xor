@@ -1,33 +1,19 @@
 package com.nn.activation;
 
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+
 
 public enum Relu implements Activation {
 	INSTANCE;
-	
+
 	@Override
-	public RealMatrix apply(RealMatrix in) {
-		double data[][] = new double[in.getRowDimension()][in.getColumnDimension()]; 
-		for (int i=0;i<in.getRowDimension();i++) {
-			for (int j=0;j<in.getColumnDimension();j++) {
-				data[i][j] = Math.max(0, in.getEntry(i, j));
-				//data[i][j] = in.getEntry(i, j);
-			}
-		}
-		return MatrixUtils.createRealMatrix(data);
+	public RealVector apply(RealVector in) {
+		return in.map(x -> Math.max(0.0, x));
 	}
 
 	@Override
-	public RealMatrix derivative(RealMatrix in, RealMatrix out) {
-		double data[][] = new double[out.getRowDimension()][out.getColumnDimension()]; 
-		for (int i=0;i<out.getRowDimension();i++) {
-			for (int j=0;j<out.getColumnDimension();j++) {
-				data[i][j] = out.getEntry(i, j)>0?1 : 0;
-				//data[i][j] = in.getEntry(i, j);
-			}
-		}
-		return MatrixUtils.createRealMatrix(data);
+	public RealVector derivative(RealVector in, RealVector out) {
+		return out.map(x -> x > 0.0 ? 1.0 : 0.0);
 	}
-
 }
+

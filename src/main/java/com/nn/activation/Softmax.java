@@ -1,42 +1,24 @@
 package com.nn.activation;
 
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+
 
 public enum Softmax implements Activation {
 	INSTANCE;
-	
+
 	@Override
-	public RealMatrix apply(RealMatrix in) {
-		double sum = 0;
-		double data[][] = new double[in.getRowDimension()][in.getColumnDimension()]; 
-		for (int i=0;i<in.getRowDimension();i++) {
-			for (int j=0;j<in.getColumnDimension();j++) {
-				double e = Math.exp(in.getEntry(i, j));
-				sum += e;
-			}
-		}
-		
-		for (int i=0;i<data.length;i++) {
-			for (int j=0;j<data[0].length;j++) {
-				data[i][j] = data[i][j]/sum;
-			}
-		}
-		
-		
-		return MatrixUtils.createRealMatrix(data);
+	public RealVector apply(RealVector in) {
+		double max = in.getMaxValue();
+		RealVector exp = in.map(x -> Math.exp(x - max));
+		double sum = exp.getL1Norm();
+		return exp.mapDivide(sum);
 	}
 
 	@Override
-	public RealMatrix derivative(RealMatrix in, RealMatrix out) {
-		double[] d = new double[in.getRowDimension()];
-		for (int i=0;i<in.getRowDimension();i++) {
-			double inval = in.getEntry(i, 0);
-			double outval = out.getEntry(i, 0);
-			d[i] = outval*(1-inval);  
-		}
-		
-		return MatrixUtils.createColumnRealMatrix(d);
+	public RealVector derivative(RealVector in, RealVector out) {
+		return out.ebeMultiply(
+				out.map(x -> 1.0 - x)
+		);
 	}
-
 }
+

@@ -1,17 +1,85 @@
 package com.nn.dnn;
 
+import com.metadata.ActivationFunction;
+import com.metadata.Architecture;
+import com.metadata.ModelSpec;
+import com.nn.activation.Activation;
+import com.nn.activation.Relu;
+import com.nn.activation.Sigmoid;
+import com.nn.activation.Tanh;
+import com.nn.layer.FullyConnected;
+import com.nn.layer.Layer;
+import com.nn.layer.OutputLayer;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
-import com.nn.layer.Layer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class NeuralNetwork {
+	public double loss = 1.0;
 	private int batchSize = 1;
 	
 	public NeuralNetwork() {}
 	
 	public NeuralNetwork(int batchSize) {
 		this.batchSize = batchSize;
+	}
+
+	public NeuralNetwork(ModelSpec spec) {
+		Architecture arch = spec.architecture();
+		int previousSize = arch.inputSize();
+
+		Layer root = null;
+		Layer previous = null;
+
+		// Build hidden layers
+		for (int nodes : arch.hiddenLayers()) {
+
+			Layer current = new FullyConnected(
+					previousSize,
+					nodes,
+					getActivation(arch.activation())
+			);
+
+			if (root == null) {
+				root = current;
+			} else {
+				previous.add(current);
+			}
+
+			previous = current;
+			previousSize = nodes;
+		}
+
+		// Build output layer
+		Layer output = new OutputLayer(
+				previousSize,
+				arch.outputSize(),
+				getActivation(arch.outputActivation())
+		);
+
+		if (root == null) {
+			root = output;
+		} else {
+			previous.add(output);
+		}
+
+		setRoot(root);
+	}
+
+	private Activation getActivation(ActivationFunction activation) {
+		return switch (activation) {
+			case TANH -> Tanh.INSTANCE;
+			case SIGMOID -> Sigmoid.INSTANCE;
+			case RELU -> Relu.INSTANCE;
+			//case LINEAR -> Linear.INSTANCE;
+			default -> throw new IllegalArgumentException(
+					"Unsupported activation: " + activation
+			);
+		};
 	}
 	
 	private Layer root;
@@ -27,27 +95,27 @@ public class NeuralNetwork {
 	public void train(double[][] inputs, double[][] outputs) {
 		double avgLoss = 0;
 		long epoch = inputs.length/batchSize;
-		
-		RealMatrix expected = null;
-		RealMatrix input = null;
-		for (int i=0;i<epoch;i++) {
-			RealMatrix[] losses = new RealMatrix[batchSize];
-			for (int j=0;j<batchSize;j++) {
-				int index = (int) (batchSize*i+j);
-				expected = MatrixUtils.createColumnRealMatrix(outputs[index]);
-				input = MatrixUtils.createColumnRealMatrix(inputs[index]);
+
+		long sampleCount = 0;
+		double totalLoss = 0;
+
+		for (int i = 0; i < epoch; i++) {
+			RealVector[] losses = new RealVector[batchSize];
+
+			for (int j = 0; j < batchSize; j++) {
+				int index = batchSize * i + j;
+				RealVector expected =
+						MatrixUtils.createRealVector(outputs[index]);
+				RealVector input =
+						MatrixUtils.createRealVector(inputs[index]);
 				losses[j] = root.forward(input, expected);
 				root.backward(input, losses[j]);
-				avgLoss = (i*avgLoss + losses[j].getEntry(0, 0))/(i+1);
-				System.out.println(avgLoss);
+				totalLoss += losses[j].getL1Norm();
+				sampleCount++;
 			}
+
 			root.updateWeightsBiases();
-			/*RealMatrix avgBatchLoss = meanSquaredLoss(losses);
-			for (int j=0;j<batchSize;j++) {
-				int index = (int) (batchSize*i+j);
-				input = MatrixUtils.createColumnRealMatrix(inputs[index]);
-				//root.backward(input, avgBatchLoss);
-			}*/
+			loss = totalLoss / sampleCount;
 		}
 	}
 	
@@ -69,7 +137,7 @@ public class NeuralNetwork {
 	}
 	
 	public double[] predict(double[] input) {
-		return root.predict(MatrixUtils.createColumnRealMatrix(input)).getColumn(0);
+		return root.predict(MatrixUtils.createRealVector(input)).toArray();
 	}
 	
 	public int[] predict(int[] inputs) {
@@ -117,5 +185,18 @@ public class NeuralNetwork {
 			dinputs[i] = (int) Math.round(inputs[i]);
 		}
 		return dinputs;
+	}
+
+	public List<Layer> getLayers() {
+		List<Layer> layers = new ArrayList<>();
+
+		Layer current = root;
+
+		while (current != null) {
+			layers.add(current);
+			current = current.getNext(); // Use your actual next-layer getter
+		}
+
+		return Collections.unmodifiableList(layers);
 	}
 }

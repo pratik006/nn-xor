@@ -1,8 +1,10 @@
 package com.nn.activation;
 
-import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+
 
 public interface Activation {
-	RealMatrix apply(RealMatrix in);
-	RealMatrix derivative(RealMatrix in,RealMatrix out);
+	RealVector apply(RealVector in);
+	RealVector derivative(RealVector in, RealVector out);
 }
+
