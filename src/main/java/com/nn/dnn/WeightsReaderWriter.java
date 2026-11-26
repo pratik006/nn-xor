@@ -8,8 +8,11 @@ import org.apache.commons.math3.linear.RealVector;
 import java.io.*;
 import java.nio.file.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class WeightsReaderWriter {
+    private static final Logger LOG = Logger.getLogger(WeightsReaderWriter.class.getName());
+
     private static final Path WEIGHTS_FILE = Paths.get("data", "models");
     private static final int MAGIC = 0x4E4E3031; // NN01
     private static final int VERSION = 1;
@@ -177,7 +180,7 @@ public class WeightsReaderWriter {
             }
         }
 
-        System.out.println("loaded model at: " + filePath.getFileName());
+        LOG.info("loaded model at: " + filePath.getFileName());
     }
 
     public static boolean exists(String modelName) {

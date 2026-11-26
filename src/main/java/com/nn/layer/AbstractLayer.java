@@ -11,8 +11,8 @@ import java.util.List;
 
 public abstract class AbstractLayer implements Layer {
 
-	private int nodes;
-	private int inputCount;
+	private final int nodes;
+	private final int inputCount;
 
 	protected double learningRate = 0.1d;
 

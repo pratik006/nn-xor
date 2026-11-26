@@ -1,5 +1,7 @@
 package com.nn.dnn;
 
+import com.metadata.ActivationFunction;
+import com.metadata.Architecture;
 import com.metadata.ModelSpec;
 import com.nn.activation.Activation;
 import com.nn.activation.Relu;
@@ -27,19 +29,19 @@ public class NeuralNetwork {
 	}
 
 	public NeuralNetwork(ModelSpec spec) {
-		ModelSpec.Architecture arch = spec.getArchitecture();
-		int previousSize = arch.getInputSize();
+		Architecture arch = spec.architecture();
+		int previousSize = arch.inputSize();
 
 		Layer root = null;
 		Layer previous = null;
 
 		// Build hidden layers
-		for (int nodes : arch.getHiddenLayers()) {
+		for (int nodes : arch.hiddenLayers()) {
 
 			Layer current = new FullyConnected(
 					previousSize,
 					nodes,
-					getActivation(arch.getActivation())
+					getActivation(arch.activation())
 			);
 
 			if (root == null) {
@@ -55,8 +57,8 @@ public class NeuralNetwork {
 		// Build output layer
 		Layer output = new OutputLayer(
 				previousSize,
-				arch.getOutputSize(),
-				getActivation(arch.getOutputActivation())
+				arch.outputSize(),
+				getActivation(arch.outputActivation())
 		);
 
 		if (root == null) {
@@ -68,9 +70,7 @@ public class NeuralNetwork {
 		setRoot(root);
 	}
 
-	private Activation getActivation(
-			ModelSpec.Activation activation) {
-
+	private Activation getActivation(ActivationFunction activation) {
 		return switch (activation) {
 			case TANH -> Tanh.INSTANCE;
 			case SIGMOID -> Sigmoid.INSTANCE;

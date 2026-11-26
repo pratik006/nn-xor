@@ -9,8 +9,10 @@ import com.nn.dnn.WeightsReaderWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
 
 public class Starter {
+	private static final Logger LOG = Logger.getLogger(Starter.class.getName());
 
 	public static void main(String[] args) throws IOException {
 		String modelName = "xor";
@@ -44,7 +46,7 @@ public class Starter {
 		final AtomicBoolean end = new AtomicBoolean(false);
 		Thread t = new Thread(() -> {
 			while (!end.get()) {
-				System.out.println("Loss: " + new DecimalFormat("0.00000").format(nn.loss));
+				LOG.info("Loss: " + new DecimalFormat("0.00000").format(nn.loss));
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {
@@ -61,18 +63,21 @@ public class Starter {
 			WeightsReaderWriter.save(nn, modelName);
 		}
 
+    	double[] input = new double[] {1,1};
+		double probability = nn.predict(input)[0];
+		LOG.info("expected 0 Result "+(probability < 0.5 ? 0 : 1));
 
-		double probability = nn.predict(new double[] {1,1})[0];
-		System.out.println("0 Result "+(probability < 0.5 ? 0 : 1));
+		input = new double[] {1,0};
+		probability = nn.predict(input)[0];
+		LOG.info("expected 1 Result "+(probability < 0.5 ? 0 : 1));
 
-		probability = nn.predict(new double[] {1,0})[0];
-		System.out.println("1 Result "+(probability < 0.5 ? 0 : 1));
+		input = new double[] {0,1};
+		probability = nn.predict(input)[0];
+		LOG.info("expected 1 Result "+(probability < 0.5 ? 0 : 1));
 
-		probability = nn.predict(new double[] {0,1})[0];
-		System.out.println("1 Result "+(probability < 0.5 ? 0 : 1));
-
-		probability = nn.predict(new double[] {0,0})[0];
-		System.out.println("0 Result "+(probability < 0.5 ? 0 : 1));
+		input = new double[] {0,0};
+		probability = nn.predict(input)[0];
+		LOG.info("expected 0 Result "+(probability < 0.5 ? 0 : 1));
 
 		end.getAndSet(true);
 	}
